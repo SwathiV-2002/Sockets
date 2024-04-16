@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Chat</title>
+    <style>
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: #eee; }
+    </style>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <input id="message-input" autocomplete="off" /><button id="send-btn">Send</button>
+    <button id="disconnect-btn">Disconnect</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        document.querySelector('#send-btn').addEventListener('click', () => {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            if (message) {
+                socket.emit('chat message', message);
+                messageInput.value = '';
+            }
+        });
+
+        socket.on('chat message', (msg) => {
+            const messagesList = document.getElementById('messages');
+            const messageItem = document.createElement('li');
+            messageItem.textContent = msg;
+            messagesList.appendChild(messageItem);
+        });
+
+        document.querySelector('#disconnect-btn').addEventListener('click', () => {
+            socket.disconnect();
+        });
+    </script>
+</body>
+</html>
